@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Create Group{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Create Group</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-warning" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control", id="name") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Create User</button>
+    </form>
+</div>
+{% endblock %}

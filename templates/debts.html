@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Group Debts - {{ group.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>💳 Group Debts - {{ group.name }}</h1>
+    <a href="{{ url_for('show_group', group_id=group.id) }}" class="btn btn-secondary">🔙 Go Back</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Suggestions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user, debt_amount in debts.items() %}
+            <tr>
+                <td>{{ user }}</td>
+                <td>
+                    <ul>
+                        {% for suggestion in suggestions %}
+                            {% if suggestion.0 == user %}
+                                {% if suggestion.2 > 0 %}
+                                    <li>{{ suggestion.1 }} owes {{ suggestion.2 }} to you</li>
+                                {% endif %}
+                            {% endif %}
+                            {% if suggestion.1 == user %}
+                                {% if suggestion.2 > 0 %}
+                                    <li>You owe {{ suggestion.2 }} to {{ suggestion.0 }}</li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

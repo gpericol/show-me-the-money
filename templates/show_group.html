@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Group Expenses - {{ group.name }}{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>Group Expenses - {{ group.name }}</h1>
+    <a href="{{ url_for('add_expense', group_id=group.id) }}" class="btn btn-primary">💸 Add Expense</a>
+    <a href="{{ url_for('debts', group_id=group.id) }}" class="btn btn-primary">💳 View Debts</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Email</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in group.expenses %}
+            <tr>
+                <td>{{ expense.formatted_date() }}</td>
+                <td>{{ expense.user.email }}</td>
+                <td>{{ expense.description }}</td>
+                <td>{{ expense.amount }}</td>
+                <td>
+                    {% if expense.user.id == user.id %}
+                    <a href="{{ url_for('delete_expense', expense_id=expense.id) }}" class="btn btn-sm btn-warning">❌ Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2"></td>
+                <th>Total</th>
+                <th>{{ total_expenses }}</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+{% endblock %}

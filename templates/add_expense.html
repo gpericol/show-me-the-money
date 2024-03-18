@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Add Expense{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>💸 Add Expen$e</h1>
+    <a href="{{ url_for('show_group', group_id=group.id) }}" class="btn btn-secondary">🔙 Go Back</a>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.amount.label(class="form-label") }}
+            <input type="number" name="amount" step="0.01" class="form-control" id="amount" required>
+            <div class="invalid-feedback">Please enter a valid number.</div>
+        </div>
+        <div class="mb-3">
+            {{ form.description.label(class="form-label") }}
+            {{ form.description(class="form-control", id="description") }}
+        </div>
+        <button type="submit" class="btn btn-primary">💸 Add Expense</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Create User{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>✍️ Register</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-warning" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control", id="email") }}
+        </div>
+        <div class="mb-3">
+            {{ form.password.label(class="form-label") }}
+            {{ form.password(class="form-control", id="password") }}
+        </div>
+        <div class="mb-3">
+            {{ form.confirm_password.label(class="form-label") }}
+            {{ form.confirm_password(class="form-control", id="confirm_password") }}
+        </div>
+        <button type="submit" class="btn btn-primary">✍️ Register</button>
+    </form>
+</div>
+{% endblock %}

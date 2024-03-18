@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Groups{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>All Groups</h1>
+    <a href="{{ url_for('create_group') }}" class="btn btn-primary">Creat€ Group</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for group in groups %}
+            <tr>
+                <td>{{ group.name }}</td>
+                <td>{{ group.code }}</td>
+                <td>
+                    <a href="{{ url_for('delete_group', group_id=group.id) }}" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
