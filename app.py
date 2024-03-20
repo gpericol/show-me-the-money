@@ -158,14 +158,21 @@ def my_groups():
     user_id = session.get('id')
     user = User.query.get_or_404(user_id)
     groups = user.groups
-    return render_template('my_groups.html', groups=groups)
+    form = JoinGroupForm()
+    return render_template('my_groups.html', groups=groups, form=form)
 
 @app.route('/join_group', methods=['POST'])
 @check_role(['user'])
 def join_group():
-    code = request.form.get('code')
-    group = Group.query.filter_by(code=code).first()
-    user = User.query.get_or_404(session.get('id'))
+    form = JoinGroupForm()
+    if form.validate_on_submit():
+        code = form.code.data
+        group = Group.query.filter_by(code=code).first()
+        user = User.query.get_or_404(session.get('id'))
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f'Error in field "{getattr(form, field).label.text}": {error}', 'error')
     
     if not group or user in group.members:
         return redirect(url_for('my_groups'))

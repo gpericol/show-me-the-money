@@ -5,8 +5,9 @@
     <h1>My Group$</h1>
     {% if session['role'] != 'admin' %}
     <form action="{{ url_for('join_group') }}" method="post" class="mb-3">
+        {{ form.hidden_tag() }}
         <div class="input-group">
-            <input type="text" name="code" class="form-control" placeholder="Enter group code">
+            {{ form.code(class="form-control", id="code") }}
             <button type="submit" class="btn btn-primary">Join Group</button>
         </div>
     </form>

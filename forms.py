@@ -35,3 +35,7 @@ class AddExpenseForm(FlaskForm):
     amount = DecimalField('Amount', validators=[DataRequired(), NumberRange(min=0.1)])
     description = TextAreaField('Description', validators=[DataRequired()])
     submit = SubmitField('Add Expense')
+
+class JoinGroupForm(FlaskForm):
+    code = StringField('Code', validators=[DataRequired(),])
+    submit = SubmitField('Join Group')
