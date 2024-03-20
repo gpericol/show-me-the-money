@@ -4,6 +4,7 @@
 <div class="container">
     <h1>💸 Add Expen$e</h1>
     <a href="{{ url_for('show_group', group_id=group.id) }}" class="btn btn-secondary">🔙 Go Back</a>
+    {{ flask_macro.render_flashed_messages() }}
     <form method="post">
         {{ form.hidden_tag() }}
         <div class="mb-3">

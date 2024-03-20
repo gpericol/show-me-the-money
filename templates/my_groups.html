@@ -4,6 +4,7 @@
 <div class="container">
     <h1>My Group$</h1>
     {% if session['role'] != 'admin' %}
+    {{ flask_macro.render_flashed_messages() }}
     <form action="{{ url_for('join_group') }}" method="post" class="mb-3">
         {{ form.hidden_tag() }}
         <div class="input-group">

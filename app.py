@@ -19,6 +19,11 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(f'Error in field "{getattr(form, field).label.text}": {error}', 'error')
+
 def check_role(required_roles):
     def decorator(func):
         @wraps(func)
@@ -77,6 +82,7 @@ def users():
     users = User.query.all()
     return render_template('users.html', users=users)
 
+# todo CSRF protection here!!!
 @app.route('/activate_user/<int:user_id>', methods=['GET'])
 @check_role(['admin'])
 def activate_user(user_id):
@@ -94,8 +100,10 @@ def change_password(user_id):
         new_password = form.new_password.data
         user.password = generate_password_hash(new_password)
         db.session.commit()
-        flash('Password changed successfully!', 'success')
         return redirect(url_for('users'))
+    else:
+        flash_errors(form)
+
     return render_template('change_password.html', form=form, user=user)
 
 @app.route('/create_user', methods=['GET', 'POST'])
@@ -104,14 +112,13 @@ def create_user():
     if form.validate_on_submit():
         email = form.email.data
         password = form.password.data
+        password = generate_password_hash(password)
         new_user = User(email=email, password=password, active=False, role=config.USER_ROLE)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('users'))
     else:
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(f'Error in field "{getattr(form, field).label.text}": {error}', 'error')
+        flash_errors(form)
     return render_template('create_user.html', form=form)
 
 @app.route('/groups', methods=['GET'])
@@ -134,8 +141,12 @@ def create_group():
         db.session.add(new_group_member)
         db.session.commit()
         return redirect(url_for('groups'))
+    else:
+        flash_errors(form)
     return render_template('create_group.html', form=form)
 
+
+# todo CSRF protection here!!!
 @app.route('/delete_group/<int:group_id>', methods=['GET'])
 @check_role(['admin'])
 def delete_group(group_id):
@@ -168,11 +179,9 @@ def join_group():
     if form.validate_on_submit():
         code = form.code.data
         group = Group.query.filter_by(code=code).first()
-        user = User.query.get_or_404(session.get('id'))
+        user = User.query.filter_by(id=session.get('id')).first()
     else:
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash(f'Error in field "{getattr(form, field).label.text}": {error}', 'error')
+        flash_errors(form)
     
     if not group or user in group.members:
         return redirect(url_for('my_groups'))
@@ -207,6 +216,8 @@ def add_expense(group_id):
         db.session.add(new_expense)
         db.session.commit()
         return redirect(url_for('show_group', group_id=group_id))
+    else:
+        flash_errors(form)
     return render_template('add_expense.html', form=form, group=group)
 
 @app.route('/delete_expense/<int:expense_id>', methods=['GET'])

@@ -3,15 +3,7 @@
 {% block content %}
 <div class="container">
     <h1>Create Group</h1>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-warning" role="alert">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+    {{ flask_macro.render_flashed_messages() }}
     <form method="post">
         {{ form.hidden_tag() }}
         <div class="mb-3">
