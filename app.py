@@ -136,7 +136,7 @@ def create_group():
         code = uuid.uuid4().hex[:6].upper()
         new_group = Group(name=name, code=code)
         db.session.add(new_group)
-        db.session.commit()
+        db.session.flush() 
         new_group_member = GroupMember(user_id=session.get('id'), group_id=new_group.id)
         db.session.add(new_group_member)
         db.session.commit()
@@ -145,20 +145,12 @@ def create_group():
         flash_errors(form)
     return render_template('create_group.html', form=form)
 
-
-# todo CSRF protection here!!!
 @app.route('/delete_group/<int:group_id>', methods=['GET'])
 @check_role(['admin'])
 def delete_group(group_id):
     group = Group.query.get_or_404(group_id)
-    related_expenses = Expense.query.filter_by(group_id=group_id).all()
-    for expense in related_expenses:
-        db.session.delete(expense)
-        
-    related_members = GroupMember.query.filter_by(group_id=group_id).all()
-    for member in related_members:
-         db.session.delete(member)
-        
+    Expense.query.filter_by(group_id=group_id).delete(synchronize_session=False)
+    GroupMember.query.filter_by(group_id=group_id).delete(synchronize_session=False)
     db.session.delete(group)
     db.session.commit()
     return redirect(url_for('groups'))
@@ -195,7 +187,7 @@ def join_group():
 def show_group(group_id):
     user = User.query.get_or_404(session.get('id'))
     group = Group.query.get_or_404(group_id)
-    if session.get('id') not in [member.id for member in group.members]:
+    if session.get('id') not in {member.id for member in group.members}:
         return redirect(url_for('my_groups'))
     
     total_expenses = sum([expense.amount for expense in group.expenses])
@@ -205,7 +197,7 @@ def show_group(group_id):
 @check_role(['admin', 'user'])
 def add_expense(group_id):
     group = Group.query.get_or_404(group_id)
-    if session.get('id') not in [member.id for member in group.members]:
+    if session.get('id') not in {member.id for member in group.members}:
         return redirect(url_for('my_groups'))
 
     form = AddExpenseForm()
